@@ -1,15 +1,19 @@
 import { NextResponse } from 'next/server';
 import prisma from '@repo/db/client';
 import bcrypt from 'bcryptjs';
-
-export async function GET() {
-  return NextResponse.json({ message: "Hello" });
-}
+import { SignUpValidation } from '@repo/zod/schema';
 
 export async function POST(req: Request) {
   console.log("Signup API Route Loaded");
 
   const body = await req.json();
+
+  const res = SignUpValidation.safeParse(body)
+  if(!res.success) {
+    return NextResponse.json({ error: 'Invalid Inputs' }, { status: 400 });
+  }
+
+
   const { firstName, lastName, email, password } = body;
 
   // Check if the user already exists
@@ -18,9 +22,8 @@ export async function POST(req: Request) {
   });
 
   if (existingUser) {
-    return NextResponse.json({ message: 'User already exists' }, { status: 400 });
+    return NextResponse.json({ error: 'User already exists' }, { status: 400 });
   }
-
   // Hash the password
   const hashedPassword = await bcrypt.hash(password, 10);
 

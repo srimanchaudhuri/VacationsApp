@@ -27,9 +27,11 @@ model Packages {
   name String 
   destination String
   description String
-  price Decimal
+  price Float
   days Int
   isAvailable Boolean @default(true)
+  bookedTill DateTime
+  maxStrength Int
   userId Int
   user User @relation(fields: [userId], references: [id])
 }

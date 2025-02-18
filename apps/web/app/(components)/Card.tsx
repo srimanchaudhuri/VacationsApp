@@ -7,13 +7,16 @@ export function Card({
   title,
   description,
   id,
-  price
+  price,
+  imgSrc,
+  place,
 }: {
   title: string;
   imgSrc?: string;
   description: string;
   id: string;
   price: number
+  place?: string
 }): JSX.Element {
   const router = useRouter();
 
@@ -33,12 +36,13 @@ export function Card({
           <span>{title}</span>
           <span className=" text-sm font-medium">{description}</span>
           <span className=" text-sm">Price:  ₹{price}/person</span>
+          <span className=" text-sm">Destination:  {place}</span>
         </div>
         <div
           onClick={() => {
             router.push(`package/?id=${id}`);
           }}
-          className="cursor-pointer flex flex-col justify-center items-center text-neutral-50 bg-neutral-800 px-4 py-2 rounded font-extralight text-sm"
+          className="cursor-pointer flex flex-col justify-center items-center text-neutral-50 bg-neutral-800 hover:bg-neutral-950 transition px-4 py-2 rounded font-extralight text-sm"
         >
           Explore
         </div>
