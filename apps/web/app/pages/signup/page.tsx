@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Image from "next/image";
 import axios from "axios";
-import { useSession } from "next-auth/react";
+import { signIn, useSession } from "next-auth/react";
 const SignUpPage = () => {
   const router = useRouter();
   const [firstName, setFirstName] = useState("");
@@ -31,13 +31,31 @@ const SignUpPage = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await axios.post("/pages/api/custom/signup", {
-        firstName,
-        lastName,
-        password,
-        email,
-      });
-      router.push("/pages/dashboard");
+      axios
+        .post("/pages/api/custom/signup", {
+          firstName,
+          lastName,
+          password,
+          email,
+        })
+        .then(async (res) => {
+          console.log(res);
+          const result = await signIn("credentials", {
+            email,
+            password,
+            redirect: false,
+          });
+
+          if (result?.error) {
+            setError(result.error);
+          } else {
+            router.push("/pages/dashboard");
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+          setError(err.response.data.error);
+        });
     } catch (error) {
       console.error("Signup error:", error);
     }
